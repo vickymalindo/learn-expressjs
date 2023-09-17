@@ -31,9 +31,12 @@ export const createBook = async (req, res) => {
       author: author,
       category: category,
     });
-    res
-      .status(200)
-      .json({ message: 'Create book successfully', data: book.dataValues });
+    response({
+      statusCode: 201,
+      message: 'Create book successfully',
+      datas: book.dataValues,
+      res,
+    });
   } catch (error) {
     throw new Error(`Create book failed, ${error.message}`);
   }
