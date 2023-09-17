@@ -69,8 +69,18 @@ export const updateBook = async (req, res) => {
       },
     });
     if (bookUpdated[0] === 0)
-      return res.status(400).json({ message: 'Update book failed' });
-    return res.status(202).json({ message: 'Update book successfully' });
+      return response({
+        statusCode: 304,
+        message: 'Update book failed or not found',
+        datas: {},
+        res,
+      });
+    return response({
+      statusCode: 202,
+      message: 'Update book successfully',
+      datas: req.body,
+      res,
+    });
   } catch (error) {
     throw new Error(`Update book failed: ${error.message}`);
   }
