@@ -91,8 +91,18 @@ export const deleteBook = async (req, res) => {
   try {
     const bookDeleted = await Books.destroy({ where: { id: id } });
     if (bookDeleted[0] === 0)
-      return res.status(400).json({ message: 'Delete book failed' });
-    return res.status(202).json({ message: 'Delete book successfully' });
+      return response({
+        statusCode: 400,
+        message: 'Delete book failed',
+        datas: {},
+        res,
+      });
+    return response({
+      statusCode: 200,
+      message: 'Delete book successfully',
+      res,
+      datas: {},
+    });
   } catch (error) {
     throw new Error(`Update book failed: ${error.message}`);
   }
