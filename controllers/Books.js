@@ -26,3 +26,10 @@ export const createBook = async (req, res) => {
     throw new Error(`Create book failed, ${error.message}`);
   }
 };
+
+export const getBook = async (req, res) => {
+  const { id } = req.params;
+  const book = await Books.findByPk(id);
+  if (!book) return res.status(404).json({ message: 'Book not found' });
+  return res.status(200).json({ message: 'Get book successfully', data: book });
+};
