@@ -49,3 +49,15 @@ export const updateBook = async (req, res) => {
     throw new Error(`Update book failed: ${error.message}`);
   }
 };
+
+export const deleteBook = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const bookDeleted = await Books.destroy({ where: { id: id } });
+    if (bookDeleted[0] === 0)
+      return res.status(400).json({ message: 'Delete book failed' });
+    return res.status(202).json({ message: 'Delete book successfully' });
+  } catch (error) {
+    throw new Error(`Update book failed: ${error.message}`);
+  }
+};
