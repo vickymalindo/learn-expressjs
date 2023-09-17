@@ -1,12 +1,24 @@
 import Books from '../models/BookModel.js';
+import response from '../utils/response.util.js';
 
 export const getBooks = async (req, res) => {
   try {
     const books = await Books.findAll();
-    if (books.length === 0) return res.json({ message: 'empty data books' });
-    return res.json(books);
+    if (books.length === 0)
+      return response({
+        statusCode: 204,
+        message: 'empty data books',
+        datas: [],
+        res,
+      });
+    return response({
+      statusCode: 200,
+      message: 'Get books successfully',
+      datas: books,
+      res,
+    });
   } catch (error) {
-    console.log(error);
+    throw new Error(`Get books failed ${error.message}`);
   }
 };
 
