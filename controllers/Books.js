@@ -9,3 +9,20 @@ export const getBooks = async (req, res) => {
     console.log(error);
   }
 };
+
+export const createBook = async (req, res) => {
+  const { title, author, category } = req.body;
+
+  try {
+    const book = await Books.create({
+      title: title,
+      author: author,
+      category: category,
+    });
+    res
+      .status(200)
+      .json({ message: 'Create book successfully', data: book.dataValues });
+  } catch (error) {
+    throw new Error(`Create book failed, ${error.message}`);
+  }
+};
