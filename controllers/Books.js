@@ -1,3 +1,4 @@
+import { validationResult } from 'express-validator';
 import Books from '../models/BookModel.js';
 import response from '../utils/response.util.js';
 
@@ -23,9 +24,10 @@ export const getBooks = async (req, res) => {
 };
 
 export const createBook = async (req, res) => {
-  const { title, author, category } = req.body;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.json(errors);
   try {
+    const { title, author, category } = req.body;
     const book = await Books.create({
       title: title,
       author: author,
