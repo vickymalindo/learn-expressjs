@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import db from './config/Database.js';
 import router from './routes/index.js';
@@ -12,7 +13,7 @@ try {
 
 app.use(express.json());
 app.use(router);
-
+app.use(cors);
 // app.get('/', function (req, res) {
 //   res.send('Hello Vicky, you are the great person');
 // });
