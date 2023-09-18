@@ -63,6 +63,8 @@ export const getBook = async (req, res) => {
 };
 
 export const updateBook = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.json(errors);
   const { id } = req.params;
   try {
     const bookUpdated = await Books.update(req.body, {
