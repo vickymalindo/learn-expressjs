@@ -14,8 +14,5 @@ try {
 app.use(express.json());
 app.use(router);
 app.use(cors);
-// app.get('/', function (req, res) {
-//   res.send('Hello Vicky, you are the great person');
-// });
 
 app.listen(3000, () => console.log('server run on port 3000'));
