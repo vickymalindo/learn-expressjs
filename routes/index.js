@@ -7,15 +7,16 @@ import {
   updateBook,
 } from '../controllers/Books.js';
 import { login, register } from '../controllers/Users.js';
+import { verifyToken } from '../middleware/verifyToken.js';
 import { insertBookValidator } from '../validations/books.js';
 import { loginValidator, registerValidator } from '../validations/users.js';
 
 const router = express.Router();
 
 // Books Route
-router.get('/books', getBooks);
+router.get('/books', verifyToken, getBooks);
 router.get('/book/:id', getBook);
-router.post('/book', insertBookValidator(), createBook);
+router.post('/book', insertBookValidator(), verifyToken, createBook);
 router.put('/book/:id', insertBookValidator(), updateBook);
 router.delete('/book/:id', deleteBook);
 
