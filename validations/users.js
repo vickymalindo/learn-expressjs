@@ -16,7 +16,7 @@ export const registerValidator = () => {
     body('passwordConfirmation')
       .not()
       .isEmpty()
-      .custom((value, { req }, next) => {
+      .custom((value, { req }) => {
         if (value !== req.body.password) {
           throw new Error('Password must be same');
         }
@@ -25,11 +25,13 @@ export const registerValidator = () => {
   ];
 };
 
-export const verifyPasswordsMatch = (req, res, next) => {
-  const { passwordConfirmation } = req.body;
-
-  return body('password')
-    .isLength({ min: 6 })
-    .withMessage('password must be at least 4 characters')
-    .equals(passwordConfirmation);
+export const loginValidator = () => {
+  return [
+    body('email')
+      .not()
+      .isEmpty()
+      .isEmail()
+      .withMessage('Not a valid email address'),
+    body('password').not().isEmpty().withMessage('Password is required'),
+  ];
 };
