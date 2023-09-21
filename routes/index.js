@@ -6,9 +6,9 @@ import {
   getBooks,
   updateBook,
 } from '../controllers/Books.js';
-import { register } from '../controllers/Users.js';
+import { login, register } from '../controllers/Users.js';
 import { insertBookValidator } from '../validations/books.js';
-import { registerValidator } from '../validations/users.js';
+import { loginValidator, registerValidator } from '../validations/users.js';
 
 const router = express.Router();
 
@@ -21,5 +21,6 @@ router.delete('/book/:id', deleteBook);
 
 // Users Route
 router.post('/register', ...registerValidator(), register);
+router.post('/login', ...loginValidator(), login);
 
 export default router;
