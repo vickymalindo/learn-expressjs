@@ -14,11 +14,11 @@ import { loginValidator, registerValidator } from '../validations/users.js';
 const router = express.Router();
 
 // Books Routes
-router.get('/books', verifyToken, getBooks);
+router.get('/books', getBooks);
 router.get('/book/:id', getBook);
 router.post('/book', insertBookValidator(), verifyToken, createBook);
-router.put('/book/:id', insertBookValidator(), updateBook);
-router.delete('/book/:id', deleteBook);
+router.put('/book/:id', verifyToken, insertBookValidator(), updateBook);
+router.delete('/book/:id', verifyToken, deleteBook);
 
 // Users Routes
 router.post('/register', ...registerValidator(), register);
