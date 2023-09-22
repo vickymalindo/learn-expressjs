@@ -1,3 +1,5 @@
+// import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -14,6 +16,7 @@ try {
   console.error(error);
 }
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(router);
 app.use(cors);
