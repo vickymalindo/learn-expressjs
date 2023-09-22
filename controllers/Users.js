@@ -69,7 +69,7 @@ export const login = async (req, res) => {
         },
       }
     );
-    res.cookie('refreshToken', {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
@@ -86,5 +86,61 @@ export const login = async (req, res) => {
       datas: null,
       res,
     });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    console.log(refreshToken);
+    if (!refreshToken)
+      return response({
+        statusCode: 401,
+        message: 'Unauthorized',
+        datas: null,
+        res,
+      });
+    const user = await Users.findOne({
+      where: {
+        refresh_token: refreshToken,
+      },
+    });
+    if (!user)
+      return response({
+        statusCode: 403,
+        message: 'Forbidden',
+        datas: null,
+        res,
+      });
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decoded) => {
+        if (err)
+          return response({
+            statusCode: 403,
+            message: 'Forbidden',
+            datas: null,
+            res,
+          });
+        const userId = user.id;
+        const { name, email } = user;
+        const accessToken = jwt.sign(
+          { userId, name, email },
+          process.env.ACCESS_TOKEN_SECRET,
+          {
+            expiresIn: '30s',
+          }
+        );
+        response({
+          statusCode: 200,
+          message: 'Refresh token success',
+          datas: accessToken,
+          res,
+        });
+      }
+    );
+  } catch (error) {
+    throw new Error(error);
   }
 };
