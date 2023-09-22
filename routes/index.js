@@ -6,7 +6,7 @@ import {
   getBooks,
   updateBook,
 } from '../controllers/Books.js';
-import { login, refreshToken, register } from '../controllers/Users.js';
+import { login, logout, refreshToken, register } from '../controllers/Users.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { insertBookValidator } from '../validations/books.js';
 import { loginValidator, registerValidator } from '../validations/users.js';
@@ -24,5 +24,6 @@ router.delete('/book/:id', deleteBook);
 router.post('/register', ...registerValidator(), register);
 router.post('/login', ...loginValidator(), login);
 router.get('/token', refreshToken);
+router.delete('/logout', logout);
 
 export default router;
