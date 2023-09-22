@@ -144,3 +144,42 @@ export const refreshToken = async (req, res) => {
     throw new Error(error);
   }
 };
+
+export const logout = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken)
+    return response({
+      statusCode: 204,
+      message: 'No token/content',
+      datas: null,
+      res,
+    });
+  const user = await Users.findOne({
+    where: {
+      refresh_token: refreshToken,
+    },
+  });
+  if (!user)
+    return response({
+      statusCode: 204,
+      message: 'User not found',
+      datas: null,
+      res,
+    });
+  const userId = user.id;
+  await Users.update(
+    { refresh_token: null },
+    {
+      where: {
+        id: userId,
+      },
+    }
+  );
+  res.clearCookie('refreshToken');
+  return response({
+    statusCode: 200,
+    message: 'Logout success',
+    datas: null,
+    res,
+  });
+};
