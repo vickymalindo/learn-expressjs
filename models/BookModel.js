@@ -15,6 +15,9 @@ const Books = db.define(
     category: {
       type: DataTypes.STRING,
     },
+    count: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     freezeTableName: true,
