@@ -195,3 +195,31 @@ export const logout = async (req, res) => {
     res,
   });
 };
+
+export const updateUser = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.json(errors);
+  const { id } = req.params;
+  try {
+    const userUpdated = await Users.update(req.body, {
+      where: {
+        id: id,
+      },
+    });
+    if (userUpdated[0] === 0)
+      return response({
+        statusCode: 304,
+        message: 'Update user failed or not found',
+        datas: null,
+        res,
+      });
+    return response({
+      statusCode: 202,
+      message: 'Update user successfully',
+      datas: req.body,
+      res,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
