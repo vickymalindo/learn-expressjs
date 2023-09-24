@@ -35,3 +35,14 @@ export const loginValidator = () => {
     body('password').not().isEmpty().withMessage('Password is required'),
   ];
 };
+
+export const updateUserValidator = () => {
+  return [
+    body('name').not().isEmpty().withMessage('Name is required'),
+    body('email')
+      .not()
+      .isEmpty()
+      .isEmail()
+      .withMessage('Not a valid email address'),
+  ];
+};
