@@ -4,6 +4,18 @@ import jwt from 'jsonwebtoken';
 import Users from '../models/UserModel.js';
 import response from '../utils/response.util.js';
 
+export const getUsers = async (req, res) => {
+  const users = await Users.findAll({
+    attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
+  });
+  return response({
+    statusCode: 200,
+    message: 'Get users successfully',
+    datas: users,
+    res,
+  });
+};
+
 export const register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.json(errors);
