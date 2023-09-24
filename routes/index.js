@@ -7,6 +7,7 @@ import {
   updateBook,
 } from '../controllers/Books.js';
 import {
+  deleteUser,
   getUsers,
   login,
   logout,
@@ -38,5 +39,6 @@ router.get('/token', refreshToken);
 router.delete('/logout', logout);
 router.get('/users', auth, getUsers);
 router.put('/user/:id', auth, updateUserValidator(), updateUser);
+router.delete('/user/:id', auth, deleteUser);
 
 export default router;
