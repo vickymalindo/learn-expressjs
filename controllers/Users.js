@@ -223,3 +223,25 @@ export const updateUser = async (req, res) => {
     throw new Error(error);
   }
 };
+
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userDeleted = await Users.destroy({ where: { id: id } });
+    if (userDeleted[0] === 0)
+      return response({
+        statusCode: 400,
+        message: 'Delete user failed',
+        datas: null,
+        res,
+      });
+    return response({
+      statusCode: 200,
+      message: 'Delete user successfully',
+      res,
+      datas: null,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
