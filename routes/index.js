@@ -12,10 +12,15 @@ import {
   logout,
   refreshToken,
   register,
+  updateUser,
 } from '../controllers/Users.js';
 import { verifyToken as auth } from '../middleware/verifyToken.js';
 import { insertBookValidator } from '../validations/books.js';
-import { loginValidator, registerValidator } from '../validations/users.js';
+import {
+  loginValidator,
+  registerValidator,
+  updateUserValidator,
+} from '../validations/users.js';
 
 const router = express.Router();
 
@@ -32,5 +37,6 @@ router.post('/login', ...loginValidator(), login);
 router.get('/token', refreshToken);
 router.delete('/logout', logout);
 router.get('/users', auth, getUsers);
+router.put('/user/:id', auth, updateUserValidator(), updateUser);
 
 export default router;
