@@ -27,11 +27,12 @@ export const createBook = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.json(errors);
   try {
-    const { title, author, category } = req.body;
+    const { title, author, category, count } = req.body;
     const book = await Books.create({
       title: title,
       author: author,
       category: category,
+      count: count,
     });
     response({
       statusCode: 201,
