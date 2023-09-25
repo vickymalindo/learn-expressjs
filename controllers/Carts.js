@@ -3,6 +3,7 @@ import Carts from '../models/CartModel.js';
 import Users from '../models/UserModel.js';
 import response from '../utils/response.util.js';
 import { validationResult } from 'express-validator';
+import { Op } from 'sequelize';
 
 export const createCart = async (req, res) => {
   const errors = validationResult(req);
@@ -61,6 +62,32 @@ export const getUserCarts = async (req, res) => {
           : 'Get user carts success',
       datas: result,
       res,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const deleteCart = async (req, res) => {
+  const { userId, bookId } = req.params;
+  try {
+    const cartDeleted = await Carts.destroy({
+      where: {
+        [Op.and]: [{ userId: userId, bookId: bookId }],
+      },
+    });
+    if (cartDeleted[0] === 0)
+      return response({
+        statusCode: 400,
+        message: 'Delete cart failed',
+        datas: null,
+        res,
+      });
+    return response({
+      statusCode: 200,
+      message: 'Delete cart successfully',
+      res,
+      datas: null,
     });
   } catch (error) {
     throw new Error(error);
