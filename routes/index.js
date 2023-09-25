@@ -52,6 +52,6 @@ router.delete('/user/:id', auth, deleteUser);
 router.post('/cart', auth, ...insertCart(), createCart);
 router.get('/cart/:id', auth, getUserCarts);
 router.get('/cart', auth, getCarts);
-router.delete('/delete/:userId/:bookId', deleteCart);
+router.delete('/delete/:userId/:bookId', auth, deleteCart);
 
 export default router;
