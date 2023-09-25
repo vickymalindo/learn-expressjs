@@ -2,15 +2,15 @@ import { body } from 'express-validator';
 
 export const insertCart = () => {
   return [
-    body('user_id')
+    body('userId')
       .not()
       .isEmpty()
       .isInt()
-      .withMessage('user_id is required / must number'),
-    body('book_id')
+      .withMessage('userId is required / must number'),
+    body('bookId')
       .not()
       .isEmpty()
       .isInt()
-      .withMessage('book_id is required / must number'),
+      .withMessage('bookId is required / must number'),
   ];
 };
