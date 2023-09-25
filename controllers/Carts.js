@@ -24,6 +24,23 @@ export const createCart = async (req, res) => {
   }
 };
 
+export const getCarts = async (req, res) => {
+  const carts = await Carts.findAll();
+  if (!carts.length)
+    return response({
+      statusCode: 400,
+      message: 'Carts empty',
+      datas: null,
+      res,
+    });
+  response({
+    statusCode: 200,
+    message: 'Get carts success',
+    datas: carts,
+    res,
+  });
+};
+
 export const getUserCarts = async (req, res) => {
   const { id } = req.params;
   try {
