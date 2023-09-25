@@ -1,7 +1,10 @@
 import { Sequelize } from 'sequelize';
 import db from '../config/Database.js';
 
-const { DataTypes } = Sequelize;
+import Carts from './CartModel.js';
+import Books from './BookModel.js';
+
+const { DataTypes, Model } = Sequelize;
 
 const Users = db.define(
   'users',
@@ -23,5 +26,31 @@ const Users = db.define(
     freezeTableName: true,
   }
 );
+
+// class Users extends Model {}
+// Users.init(
+//   {
+//     name: {
+//       type: DataTypes.STRING,
+//     },
+//     email: {
+//       type: DataTypes.STRING,
+//     },
+//     password: {
+//       type: DataTypes.STRING,
+//     },
+//     refresh_token: {
+//       type: DataTypes.TEXT,
+//     },
+//   },
+//   {
+//     sequelize,
+//     modelName: Users,
+//     freezeTableName: true,
+//   }
+// );
+
+Users.belongsToMany(Books, { through: Carts });
+Books.belongsToMany(Users, { through: Carts });
 
 export default Users;
