@@ -27,29 +27,6 @@ const Users = db.define(
   }
 );
 
-// class Users extends Model {}
-// Users.init(
-//   {
-//     name: {
-//       type: DataTypes.STRING,
-//     },
-//     email: {
-//       type: DataTypes.STRING,
-//     },
-//     password: {
-//       type: DataTypes.STRING,
-//     },
-//     refresh_token: {
-//       type: DataTypes.TEXT,
-//     },
-//   },
-//   {
-//     sequelize,
-//     modelName: Users,
-//     freezeTableName: true,
-//   }
-// );
-
 Users.belongsToMany(Books, { through: Carts });
 Books.belongsToMany(Users, { through: Carts });
 
