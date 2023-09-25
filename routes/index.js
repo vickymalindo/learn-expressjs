@@ -8,6 +8,7 @@ import {
 } from '../controllers/Books.js';
 import {
   deleteUser,
+  getUser,
   getUsers,
   login,
   logout,
@@ -46,6 +47,7 @@ router.get('/token', refreshToken);
 router.delete('/logout', logout);
 router.get('/users', auth, getUsers);
 router.put('/user/:id', auth, updateUserValidator(), updateUser);
+router.get('/user/:id', auth, getUser);
 router.delete('/user/:id', auth, deleteUser);
 
 // Carts Routes
