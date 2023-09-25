@@ -10,6 +10,18 @@ export const createCart = async (req, res) => {
   if (!errors.isEmpty()) return res.json(errors);
   try {
     const { userId, bookId } = req.body;
+    const isExist = await Carts.findAll({
+      where: {
+        [Op.and]: [{ userId: userId, bookId: bookId }],
+      },
+    });
+    if (isExist.length > 0)
+      return response({
+        statusCode: 401,
+        message: 'Cart already in db',
+        datas: null,
+        res,
+      });
     const cart = await Carts.create({
       userId: userId,
       bookId: bookId,
