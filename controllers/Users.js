@@ -245,3 +245,23 @@ export const deleteUser = async (req, res) => {
     throw new Error(error);
   }
 };
+
+export const getUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await Users.findOne({
+      where: {
+        id: id,
+      },
+      attributes: { exclude: ['password', 'refresh_token'] },
+    });
+    response({
+      statusCode: 200,
+      message: 'Get user success',
+      datas: user,
+      res,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
