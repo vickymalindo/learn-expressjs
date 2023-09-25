@@ -23,7 +23,7 @@ import {
   updateUserValidator,
 } from '../validations/users.js';
 import { insertCart } from '../validations/carts.js';
-import { createCart, getUserCarts } from '../controllers/Carts.js';
+import { createCart, getCarts, getUserCarts } from '../controllers/Carts.js';
 
 const router = express.Router();
 
@@ -45,6 +45,7 @@ router.delete('/user/:id', auth, deleteUser);
 
 // Carts Routes
 router.post('/cart', auth, ...insertCart(), createCart);
-router.get('/cart/:id', getUserCarts);
+router.get('/cart/:id', auth, getUserCarts);
+router.get('/cart', auth, getCarts);
 
 export default router;
