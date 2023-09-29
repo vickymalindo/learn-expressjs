@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 import Users from '../models/UserModel.js';
 import response from '../utils/response.util.js';
 
@@ -259,6 +260,43 @@ export const getUser = async (req, res) => {
       statusCode: 200,
       message: 'Get user success',
       datas: user,
+      res,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const searchUser = async (req, res) => {
+  const { name, email } = req.query;
+  try {
+    const findUsers = await Users.findAll({
+      where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.like]: `%${name?.toLowerCase() ?? ''}%`,
+            },
+            email: {
+              [Op.like]: `%${email?.toLowerCase() ?? ''}%`,
+            },
+          },
+        ],
+      },
+      attributes: { exclude: ['password', 'refresh_token'] },
+    });
+    if (findUsers.length < 1) {
+      return response({
+        statusCode: 404,
+        message: 'Users not found',
+        datas: null,
+        res,
+      });
+    }
+    return response({
+      statusCode: 302,
+      message: 'Success get users',
+      datas: findUsers,
       res,
     });
   } catch (error) {
