@@ -4,6 +4,7 @@ import {
   deleteBook,
   getBook,
   getBooks,
+  searchBook,
   updateBook,
 } from '../controllers/Books.js';
 import {
@@ -40,6 +41,7 @@ router.get('/book/:id', getBook);
 router.post('/book', insertBookValidator(), auth, createBook);
 router.put('/book/:id', auth, insertBookValidator(), updateBook);
 router.delete('/book/:id', auth, deleteBook);
+router.get('/book', searchBook);
 
 // Users Routes
 router.post('/register', ...registerValidator(), register);
