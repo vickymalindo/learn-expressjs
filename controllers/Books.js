@@ -20,7 +20,7 @@ export const getBooks = async (req, res) => {
       res,
     });
   } catch (error) {
-    throw new Error(`Get books failed ${error.message}`);
+    throw new Error(error);
   }
 };
 
@@ -42,7 +42,7 @@ export const createBook = async (req, res) => {
       res,
     });
   } catch (error) {
-    throw new Error(`Create book failed, ${error.message}`);
+    throw new Error(error);
   }
 };
 
@@ -88,7 +88,7 @@ export const updateBook = async (req, res) => {
       res,
     });
   } catch (error) {
-    throw new Error(`Update book failed: ${error.message}`);
+    throw new Error(error);
   }
 };
 
@@ -110,7 +110,7 @@ export const deleteBook = async (req, res) => {
       datas: {},
     });
   } catch (error) {
-    throw new Error(`Update book failed: ${error.message}`);
+    throw new Error(error);
   }
 };
 
