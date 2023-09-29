@@ -1,4 +1,5 @@
 import { validationResult } from 'express-validator';
+import { Op } from 'sequelize';
 import Books from '../models/BookModel.js';
 import response from '../utils/response.util.js';
 
@@ -110,5 +111,42 @@ export const deleteBook = async (req, res) => {
     });
   } catch (error) {
     throw new Error(`Update book failed: ${error.message}`);
+  }
+};
+
+export const searchBook = async (req, res) => {
+  const { title, author, category } = req.query;
+  try {
+    const findBooks = await Books.findAll({
+      where: {
+        [Op.or]: [
+          {
+            title: {
+              [Op.like]: `%${title?.toLowerCase() ?? ''}%`,
+            },
+            author: {
+              [Op.like]: `%${author?.toLowerCase() ?? ''}%`,
+            },
+            category: { [Op.like]: `%${category?.toLowerCase() ?? ''}%` },
+          },
+        ],
+      },
+    });
+    if (findBooks.length < 1) {
+      return response({
+        statusCode: 404,
+        message: 'Books not found',
+        datas: null,
+        res,
+      });
+    }
+    return response({
+      statusCode: 302,
+      message: 'Success search books',
+      datas: findBooks,
+      res,
+    });
+  } catch (error) {
+    throw new Error(error);
   }
 };
