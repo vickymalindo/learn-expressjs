@@ -16,7 +16,7 @@ const Books = db.define(
       type: DataTypes.STRING,
     },
     count: {
-      type: DataTypes.STRING(8),
+      type: DataTypes.INTEGER,
     },
     name: {
       type: DataTypes.STRING,
