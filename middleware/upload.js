@@ -1,7 +1,6 @@
 import multer from 'multer';
 
 const imageFilter = (req, file, cb) => {
-  console.log(file.mimetype);
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
