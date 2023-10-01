@@ -25,15 +25,20 @@ export const getBooks = async (req, res) => {
 };
 
 export const createBook = async (req, res) => {
+  console.log(req.body.count);
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.json(errors);
   try {
     const { title, author, category, count } = req.body;
+    const { originalname, filename } = req.file;
+    const url = `${req.protocol}://${req.get('host')}/images/${filename}`;
     const book = await Books.create({
       title: title,
       author: author,
       category: category,
       count: count,
+      name: originalname,
+      url: url,
     });
     response({
       statusCode: 201,
