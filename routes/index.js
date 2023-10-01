@@ -40,9 +40,9 @@ const router = express.Router();
 router.get('/books', getBooks);
 router.get('/book/:id', getBook);
 router.post(
-  '/book',
-  uploadImage.single('image'),
+  '/book/:count',
   auth,
+  uploadImage.single('image'),
   insertBookValidator(),
   createBook
 );
