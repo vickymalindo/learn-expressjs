@@ -32,13 +32,20 @@ import {
   registerValidator,
   updateUserValidator,
 } from '../validations/users.js';
+import { uploadImage } from '../middleware/upload.js';
 
 const router = express.Router();
 
 // Books Routes
 router.get('/books', getBooks);
 router.get('/book/:id', getBook);
-router.post('/book', insertBookValidator(), auth, createBook);
+router.post(
+  '/book',
+  uploadImage.single('image'),
+  auth,
+  insertBookValidator(),
+  createBook
+);
 router.put('/book/:id', auth, insertBookValidator(), updateBook);
 router.delete('/book/:id', auth, deleteBook);
 router.get('/book', searchBook);
