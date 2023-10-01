@@ -16,7 +16,13 @@ const Books = db.define(
       type: DataTypes.STRING,
     },
     count: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(8),
+    },
+    name: {
+      type: DataTypes.STRING,
+    },
+    url: {
+      type: DataTypes.STRING,
     },
   },
   {
