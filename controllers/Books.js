@@ -73,13 +73,41 @@ export const getBook = async (req, res) => {
 export const updateBook = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.json(errors);
-  const { id } = req.params;
-  try {
-    const bookUpdated = await Books.update(req.body, {
-      where: {
-        id: id,
-      },
+  const { id, count } = req.params;
+  const book = await Books.findByPk(id);
+  if (!book) {
+    return response({
+      statusCode: 404,
+      message: 'Book not found',
+      datas: null,
+      res,
     });
+  }
+  try {
+    const urlToArray = book.url.split('/');
+    const odlFilename = urlToArray[urlToArray.length - 1];
+    const filepath = `./public/images/${odlFilename}`;
+    fs.unlinkSync(filepath);
+
+    const { title, author, category } = req.body;
+    const { originalname, filename } = req.file;
+    const url = `${req.protocol}://${req.get('host')}/images/${filename}`;
+
+    const bookUpdated = await Books.update(
+      {
+        title: title,
+        author: author,
+        category: category,
+        count: +count,
+        name: originalname,
+        url: url,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
     if (bookUpdated[0] === 0)
       return response({
         statusCode: 304,
@@ -90,7 +118,7 @@ export const updateBook = async (req, res) => {
     return response({
       statusCode: 202,
       message: 'Update book successfully',
-      datas: req.body,
+      datas: { ...req.body, count: +count, name: originalname, url: url },
       res,
     });
   } catch (error) {
