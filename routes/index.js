@@ -46,7 +46,13 @@ router.post(
   insertBookValidator(),
   createBook
 );
-router.put('/book/:id', auth, insertBookValidator(), updateBook);
+router.put(
+  '/book/:id/:count',
+  auth,
+  uploadImage.single('image'),
+  insertBookValidator(),
+  updateBook
+);
 router.delete('/book/:id', auth, deleteBook);
 router.get('/book', searchBook);
 
