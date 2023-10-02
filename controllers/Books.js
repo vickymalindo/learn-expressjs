@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator';
 import { Op } from 'sequelize';
 import Books from '../models/BookModel.js';
 import response from '../utils/response.util.js';
+import fs from 'fs';
 
 export const getBooks = async (req, res) => {
   try {
@@ -99,7 +100,23 @@ export const updateBook = async (req, res) => {
 
 export const deleteBook = async (req, res) => {
   const { id } = req.params;
+
+  const book = await Books.findByPk(id);
+  if (!book) {
+    return response({
+      statusCode: 404,
+      message: 'Book not found',
+      datas: null,
+      res,
+    });
+  }
+
   try {
+    const urlToArray = book.url.split('/');
+    const filename = urlToArray[urlToArray.length - 1];
+    const filepath = `./public/images/${filename}`;
+    fs.unlinkSync(filepath);
+
     const bookDeleted = await Books.destroy({ where: { id: id } });
     if (bookDeleted[0] === 0)
       return response({
