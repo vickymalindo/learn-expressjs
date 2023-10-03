@@ -26,9 +26,9 @@ export const getBooks = async (req, res) => {
 
 export const createBook = async (req, res) => {
   const { count } = req.params;
+  const { title, author, category } = req.body;
+  const { originalname, filename, path } = req.file;
   try {
-    const { title, author, category } = req.body;
-    const { originalname, filename } = req.file;
     const url = `${req.protocol}://${req.get('host')}/images/${filename}`;
     const book = await Books.create({
       title: title,
@@ -45,6 +45,7 @@ export const createBook = async (req, res) => {
       res,
     });
   } catch (error) {
+    fs.unlinkSync(path);
     throw new Error(error);
   }
 };
