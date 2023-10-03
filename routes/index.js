@@ -24,15 +24,15 @@ import {
   searchUser,
   updateUser,
 } from '../controllers/Users.js';
+import { uploadImage } from '../middleware/upload.js';
 import { verifyToken as auth } from '../middleware/verifyToken.js';
-import { insertBookValidator } from '../validations/books.js';
+import { insertBookValidator, validatorImage } from '../validations/books.js';
 import { insertCart } from '../validations/carts.js';
 import {
   loginValidator,
   registerValidator,
   updateUserValidator,
 } from '../validations/users.js';
-import { uploadImage } from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -51,6 +51,7 @@ router.put(
   auth,
   uploadImage.single('image'),
   insertBookValidator(),
+  validatorImage,
   updateBook
 );
 router.delete('/book/:id', auth, deleteBook);
