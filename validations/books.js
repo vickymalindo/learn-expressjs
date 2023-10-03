@@ -1,4 +1,5 @@
-import { check } from 'express-validator';
+import { check, validationResult } from 'express-validator';
+import fs from 'fs';
 
 export const insertBookValidator = () => {
   return [
@@ -12,4 +13,17 @@ export const insertBookValidator = () => {
       throw new Error('Only image');
     }),
   ];
+};
+
+export const validatorImage = (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.json(errors);
+    next();
+  } catch (error) {
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+    console.log(`successfully deleted ${req.file.path}`);
+  }
 };
