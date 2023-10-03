@@ -44,6 +44,7 @@ router.post(
   auth,
   uploadImage.single('image'),
   insertBookValidator(),
+  validatorImage,
   createBook
 );
 router.put(
