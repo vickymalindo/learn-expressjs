@@ -1,8 +1,7 @@
-import { validationResult } from 'express-validator';
+import fs from 'fs';
 import { Op } from 'sequelize';
 import Books from '../models/BookModel.js';
 import response from '../utils/response.util.js';
-import fs from 'fs';
 
 export const getBooks = async (req, res) => {
   try {
@@ -27,8 +26,6 @@ export const getBooks = async (req, res) => {
 
 export const createBook = async (req, res) => {
   const { count } = req.params;
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.json(errors);
   try {
     const { title, author, category } = req.body;
     const { originalname, filename } = req.file;
@@ -71,8 +68,6 @@ export const getBook = async (req, res) => {
 };
 
 export const updateBook = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.json(errors);
   const { id, count } = req.params;
   const book = await Books.findByPk(id);
   if (!book) {
@@ -83,14 +78,15 @@ export const updateBook = async (req, res) => {
       res,
     });
   }
+  const urlToArray = book.url.split('/');
+  const odlFilename = urlToArray[urlToArray.length - 1];
+  const filepath = `./public/images/${odlFilename}`;
+
+  const { title, author, category } = req.body;
+  const { originalname, filename, path } = req.file;
   try {
-    const urlToArray = book.url.split('/');
-    const odlFilename = urlToArray[urlToArray.length - 1];
-    const filepath = `./public/images/${odlFilename}`;
     fs.unlinkSync(filepath);
 
-    const { title, author, category } = req.body;
-    const { originalname, filename } = req.file;
     const url = `${req.protocol}://${req.get('host')}/images/${filename}`;
 
     const bookUpdated = await Books.update(
@@ -122,6 +118,7 @@ export const updateBook = async (req, res) => {
       res,
     });
   } catch (error) {
+    fs.unlinkSync(path);
     throw new Error(error);
   }
 };
