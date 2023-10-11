@@ -1,4 +1,5 @@
 import multer from 'multer';
+import sharp from 'sharp';
 
 const imageFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
@@ -9,9 +10,6 @@ const imageFilter = (req, file, cb) => {
 };
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './public/images');
-  },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const imageWithoutExt = file.originalname.split('.')[0];
@@ -23,3 +21,21 @@ export const uploadImage = multer({
   storage: storage,
   fileFilter: imageFilter,
 });
+
+export const resizeImage = (req, res, next) => {
+  const { path, filename } = req.file;
+  sharp(path)
+    .resize(300, 480)
+    .webp()
+    .toFile(`./public/images/${filename}`, (err, info) => {
+      if (err) {
+        console.error(err);
+        fs.unlink(req.file.path, (err) => {
+          console.log(err);
+        });
+      } else {
+        console.log(info);
+      }
+    });
+  next();
+};
