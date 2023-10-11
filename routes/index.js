@@ -24,7 +24,7 @@ import {
   searchUser,
   updateUser,
 } from '../controllers/Users.js';
-import { uploadImage } from '../middleware/upload.js';
+import { resizeImage, uploadImage } from '../middleware/upload.js';
 import { verifyToken as auth } from '../middleware/verifyToken.js';
 import { insertBookValidator, validatorImage } from '../validations/books.js';
 import { insertCart } from '../validations/carts.js';
@@ -45,6 +45,7 @@ router.post(
   uploadImage.single('image'),
   insertBookValidator(),
   validatorImage,
+  resizeImage,
   createBook
 );
 router.put(
@@ -53,6 +54,7 @@ router.put(
   uploadImage.single('image'),
   insertBookValidator(),
   validatorImage,
+  resizeImage,
   updateBook
 );
 router.delete('/book/:id', auth, deleteBook);
