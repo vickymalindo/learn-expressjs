@@ -21,6 +21,10 @@ const Users = db.define(
     refresh_token: {
       type: DataTypes.TEXT,
     },
+    verify_email: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     freezeTableName: true,
