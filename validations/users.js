@@ -1,4 +1,5 @@
 import { body } from 'express-validator';
+import Users from '../models/UserModel.js';
 
 export const registerValidator = () => {
   return [
@@ -7,7 +8,15 @@ export const registerValidator = () => {
       .not()
       .isEmpty()
       .isEmail()
-      .withMessage('Not a valid e-mail address'),
+      .withMessage('Not a valid e-mail address')
+      .custom(async (value) => {
+        const user = await Users.findOne({ where: { email: value } });
+        // console.log(user.dataValues !== null);
+        if (user?.dataValues) {
+          throw new Error('Email already taken');
+        }
+        return true;
+      }),
     body('password')
       .not()
       .isEmpty()
