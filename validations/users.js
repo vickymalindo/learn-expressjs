@@ -61,3 +61,23 @@ export const updateUserValidator = () => {
       }),
   ];
 };
+
+export const changePasswordValidator = () => {
+  return [
+    body('email')
+      .not()
+      .isEmpty()
+      .isEmail()
+      .withMessage('Not a valid email address'),
+    body('password')
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 })
+      .withMessage('Must have minimal 6 character'),
+    body('newPassword')
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 })
+      .withMessage('Must have minimal 6 character'),
+  ];
+};
