@@ -344,3 +344,38 @@ export const searchUser = async (req, res) => {
     throw new Error(error);
   }
 };
+
+export const changePassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.json(errors);
+
+  const { email, password, newPassword } = req.body;
+
+  const user = await Users.findOne({
+    where: { email: email },
+    attributes: { exclude: ['refresh_token'] },
+  });
+
+  const matchPassword = await bcrypt.compare(password, user.password);
+  if (!matchPassword) {
+    return response({
+      statusCode: 401,
+      message: 'Wrong password',
+      datas: null,
+      res,
+    });
+  }
+
+  const salt = await bcrypt.genSalt();
+  const hashPassword = await bcrypt.hash(newPassword, salt);
+
+  user.password = hashPassword;
+  await user.save();
+
+  return response({
+    statusCode: 200,
+    message: 'Password success changed',
+    datas: user,
+    res,
+  });
+};
