@@ -9,6 +9,7 @@ export const getUsers = async (req, res) => {
   const users = await Users.findAll({
     attributes: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
   });
+
   return response({
     statusCode: 200,
     message: 'Get users successfully',
@@ -20,15 +21,20 @@ export const getUsers = async (req, res) => {
 export const register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.json(errors);
+
   const { name, email, password } = req.body;
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
+
   try {
     const user = await Users.create({
       name: name,
       email: email,
       password: hashPassword,
     });
+
+    delete user.dataValues.password;
+    console.log(user);
     response({
       statusCode: 201,
       message: 'Register success',
@@ -43,13 +49,18 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.json(errors);
+
   const { email, password } = req.body;
+
   try {
+    // find user by email
     const user = await Users.findOne({
       where: {
         email: email,
       },
     });
+
+    // compare hash password to real password
     const matchPassword = await bcrypt.compare(password, user.password);
     if (!matchPassword)
       return response({
@@ -58,8 +69,11 @@ export const login = async (req, res) => {
         datas: null,
         res,
       });
+
     const userId = user.id;
     const name = user.name;
+
+    // generate access token with jwt sign
     const accessToken = jwt.sign(
       { userId, name, email },
       process.env.ACCESS_TOKEN_SECRET,
@@ -67,6 +81,8 @@ export const login = async (req, res) => {
         expiresIn: '30S',
       }
     );
+
+    // generate refresh token with jwt sign
     const refreshToken = jwt.sign(
       { userId, name, email },
       process.env.REFRESH_TOKEN_SECRET,
@@ -74,6 +90,8 @@ export const login = async (req, res) => {
         expiresIn: '1d',
       }
     );
+
+    // upadte user refresh_token
     await Users.update(
       { refresh_token: refreshToken },
       {
@@ -82,8 +100,12 @@ export const login = async (req, res) => {
         },
       }
     );
+
+    // give cookie with value refresh token
     res.cookie('refreshToken', refreshToken, {
+      // this use for client-side scripting
       httpOnly: true,
+      // this for expired cookie
       maxAge: 24 * 60 * 60 * 1000,
     });
     response({
@@ -104,8 +126,8 @@ export const login = async (req, res) => {
 
 export const refreshToken = async (req, res) => {
   try {
+    // get cookie refresh token
     const refreshToken = req.cookies.refreshToken;
-    console.log(refreshToken);
     if (!refreshToken)
       return response({
         statusCode: 401,
@@ -113,11 +135,13 @@ export const refreshToken = async (req, res) => {
         datas: null,
         res,
       });
+
     const user = await Users.findOne({
       where: {
         refresh_token: refreshToken,
       },
     });
+
     if (!user)
       return response({
         statusCode: 403,
@@ -125,6 +149,8 @@ export const refreshToken = async (req, res) => {
         datas: null,
         res,
       });
+
+    // verify refresh token
     jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
@@ -136,8 +162,11 @@ export const refreshToken = async (req, res) => {
             datas: null,
             res,
           });
+
         const userId = user.id;
         const { name, email } = user;
+
+        // generate access token
         const accessToken = jwt.sign(
           { userId, name, email },
           process.env.ACCESS_TOKEN_SECRET,
@@ -145,6 +174,7 @@ export const refreshToken = async (req, res) => {
             expiresIn: '30s',
           }
         );
+
         response({
           statusCode: 200,
           message: 'Refresh token success',
@@ -167,11 +197,13 @@ export const logout = async (req, res) => {
       datas: null,
       res,
     });
+
   const user = await Users.findOne({
     where: {
       refresh_token: refreshToken,
     },
   });
+
   if (!user)
     return response({
       statusCode: 204,
@@ -179,6 +211,7 @@ export const logout = async (req, res) => {
       datas: null,
       res,
     });
+
   const userId = user.id;
   await Users.update(
     { refresh_token: null },
@@ -188,6 +221,8 @@ export const logout = async (req, res) => {
       },
     }
   );
+
+  // clear cookie refresh token
   res.clearCookie('refreshToken');
   return response({
     statusCode: 200,
@@ -200,6 +235,7 @@ export const logout = async (req, res) => {
 export const updateUser = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.json(errors);
+
   const { id } = req.params;
   try {
     const userUpdated = await Users.update(req.body, {
@@ -207,6 +243,7 @@ export const updateUser = async (req, res) => {
         id: id,
       },
     });
+
     if (userUpdated[0] === 0)
       return response({
         statusCode: 304,
@@ -214,6 +251,7 @@ export const updateUser = async (req, res) => {
         datas: null,
         res,
       });
+
     return response({
       statusCode: 202,
       message: 'Update user successfully',
@@ -236,6 +274,7 @@ export const deleteUser = async (req, res) => {
         datas: null,
         res,
       });
+
     return response({
       statusCode: 200,
       message: 'Delete user successfully',
@@ -256,6 +295,7 @@ export const getUser = async (req, res) => {
       },
       attributes: { exclude: ['password', 'refresh_token'] },
     });
+
     response({
       statusCode: 200,
       message: 'Get user success',
@@ -285,6 +325,7 @@ export const searchUser = async (req, res) => {
       },
       attributes: { exclude: ['password', 'refresh_token'] },
     });
+
     if (findUsers.length < 1) {
       return response({
         statusCode: 404,
