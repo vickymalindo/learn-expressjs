@@ -11,7 +11,6 @@ export const registerValidator = () => {
       .withMessage('Not a valid e-mail address')
       .custom(async (value) => {
         const user = await Users.findOne({ where: { email: value } });
-        // console.log(user.dataValues !== null);
         if (user?.dataValues) {
           throw new Error('Email already taken');
         }
@@ -52,6 +51,13 @@ export const updateUserValidator = () => {
       .not()
       .isEmpty()
       .isEmail()
-      .withMessage('Not a valid email address'),
+      .withMessage('Not a valid email address')
+      .custom(async (value) => {
+        const user = await Users.findOne({ where: { email: value } });
+        if (user?.dataValues) {
+          throw new Error('Email already taken');
+        }
+        return true;
+      }),
   ];
 };
