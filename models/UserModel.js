@@ -4,7 +4,7 @@ import db from '../config/Database.js';
 import Carts from './CartModel.js';
 import Books from './BookModel.js';
 
-const { DataTypes, Model } = Sequelize;
+const { DataTypes } = Sequelize;
 
 const Users = db.define(
   'users',
@@ -14,6 +14,7 @@ const Users = db.define(
     },
     email: {
       type: DataTypes.STRING,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
