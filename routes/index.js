@@ -14,6 +14,7 @@ import {
   getUserCarts,
 } from '../controllers/Carts.js';
 import {
+  changePassword,
   deleteUser,
   getUser,
   getUsers,
@@ -29,6 +30,7 @@ import { verifyToken as auth } from '../middleware/verifyToken.js';
 import { insertBookValidator, validatorImage } from '../validations/books.js';
 import { insertCart } from '../validations/carts.js';
 import {
+  changePasswordValidator,
   loginValidator,
   registerValidator,
   updateUserValidator,
@@ -66,10 +68,16 @@ router.post('/login', ...loginValidator(), login);
 router.get('/token', refreshToken);
 router.delete('/logout', logout);
 router.get('/users', auth, getUsers);
-router.put('/user/:id', auth, updateUserValidator(), updateUser);
+router.put('/user/:id', auth, ...updateUserValidator(), updateUser);
 router.get('/user/:id', auth, getUser);
 router.delete('/user/:id', auth, deleteUser);
 router.get('/user', auth, searchUser);
+router.post(
+  '/user/password',
+  auth,
+  ...changePasswordValidator(),
+  changePassword
+);
 
 // Carts Routes
 router.post('/cart', auth, ...insertCart(), createCart);
