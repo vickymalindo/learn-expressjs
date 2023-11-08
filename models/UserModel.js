@@ -26,6 +26,14 @@ const Users = db.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    token_verify: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
+    otp: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
   },
   {
     freezeTableName: true,
