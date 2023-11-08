@@ -34,7 +34,6 @@ export const register = async (req, res) => {
     });
 
     delete user.dataValues.password;
-    console.log(user);
     response({
       statusCode: 201,
       message: 'Register success',
@@ -368,6 +367,31 @@ export const changePassword = async (req, res) => {
 
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(newPassword, salt);
+
+  user.password = hashPassword;
+  await user.save();
+
+  return response({
+    statusCode: 200,
+    message: 'Password success changed',
+    datas: user,
+    res,
+  });
+};
+
+export const forgotPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.json(errors);
+
+  const { otp } = req.query;
+  const { password } = req.body;
+  const user = Users.findOne({
+    where: { otp: otp },
+    attributes: { exclude: ['refresh_token'] },
+  });
+
+  const salt = await bcrypt.genSalt();
+  const hashPassword = await bcrypt.hash(password, salt);
 
   user.password = hashPassword;
   await user.save();
