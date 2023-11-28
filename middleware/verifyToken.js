@@ -23,7 +23,7 @@ export const verifyToken = (req, res, next) => {
     // decoded output is the data that sign using jwt
     console.log(decoded);
 
-    req.email = decoded.email;
+    // req.email = decoded.email;
     next();
   });
 };

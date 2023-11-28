@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import Users from '../models/UserModel.js';
 import response from '../utils/response.util.js';
+import { sendEmail } from '../libs/email.js';
+import { generateRandomToken } from '../utils/randomToken.js';
 
 export const getUsers = async (req, res) => {
   const users = await Users.findAll({
@@ -25,13 +27,26 @@ export const register = async (req, res) => {
   const { name, email, password } = req.body;
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
+  const random_token = generateRandomToken(20);
 
   try {
     const user = await Users.create({
       name: name,
       email: email,
       password: hashPassword,
+      token_verify: random_token,
     });
+
+    if (user) {
+      sendEmail({
+        from: `${process.env.EMAIL}`,
+        to: `${email}`,
+        subject: 'Account Verification Link',
+        text: `Hello, ${name} Please verify your email by
+            clicking this link :
+            http://localhost:3000/verify-email/?token=${user.dataValues.token_verify}`,
+      });
+    }
 
     delete user.dataValues.password;
     response({
