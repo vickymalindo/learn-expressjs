@@ -22,17 +22,8 @@ const Users = db.define(
     refresh_token: {
       type: DataTypes.TEXT,
     },
-    verify_email: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    token_verify: {
+    level: {
       type: DataTypes.STRING,
-      defaultValue: null,
-    },
-    otp: {
-      type: DataTypes.INTEGER,
-      defaultValue: null,
     },
   },
   {

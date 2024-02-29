@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 import Users from '../models/UserModel.js';
 import response from '../utils/response.util.js';
-import { sendEmail } from '../libs/email.js';
 import { generateRandomToken } from '../utils/randomToken.js';
 
 export const getUsers = async (req, res) => {
@@ -35,18 +34,8 @@ export const register = async (req, res) => {
       email: email,
       password: hashPassword,
       token_verify: random_token,
+      level: 'User',
     });
-
-    if (user) {
-      sendEmail({
-        from: `${process.env.EMAIL}`,
-        to: `${email}`,
-        subject: 'Account Verification Link',
-        text: `Hello, ${name} Please verify your email by
-            clicking this link :
-            http://localhost:3000/verify-email/?token=${user.dataValues.token_verify}`,
-      });
-    }
 
     delete user.dataValues.password;
     response({
@@ -85,11 +74,11 @@ export const login = async (req, res) => {
       });
 
     const userId = user.id;
-    const name = user.name;
+    const { name, level } = user;
 
     // generate access token with jwt sign
     const accessToken = jwt.sign(
-      { userId, name, email },
+      { userId, name, email, level },
       process.env.ACCESS_TOKEN_SECRET,
       {
         expiresIn: '30S',
@@ -98,7 +87,7 @@ export const login = async (req, res) => {
 
     // generate refresh token with jwt sign
     const refreshToken = jwt.sign(
-      { userId, name, email },
+      { userId, name, email, level },
       process.env.REFRESH_TOKEN_SECRET,
       {
         expiresIn: '1d',
@@ -178,11 +167,11 @@ export const refreshToken = async (req, res) => {
           });
 
         const userId = user.id;
-        const { name, email } = user;
+        const { name, email, level } = user;
 
         // generate access token
         const accessToken = jwt.sign(
-          { userId, name, email },
+          { userId, name, email, level },
           process.env.ACCESS_TOKEN_SECRET,
           {
             expiresIn: '30s',

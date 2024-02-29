@@ -26,7 +26,7 @@ import {
   updateUser,
 } from '../controllers/Users.js';
 import { resizeImage, uploadImage } from '../middleware/upload.js';
-import { verifyToken as auth } from '../middleware/verifyToken.js';
+import { verifyToken as auth, verifyAdmin } from '../middleware/verifyToken.js';
 import { insertBookValidator, validatorImage } from '../validations/books.js';
 import { insertCart } from '../validations/carts.js';
 import {
@@ -43,7 +43,7 @@ router.get('/books', getBooks);
 router.get('/book/:id', getBook);
 router.post(
   '/book/:count',
-  auth,
+  verifyAdmin,
   uploadImage.single('image'),
   insertBookValidator(),
   validatorImage,
@@ -52,14 +52,14 @@ router.post(
 );
 router.put(
   '/book/:id/:count',
-  auth,
+  verifyAdmin,
   uploadImage.single('image'),
   insertBookValidator(),
   validatorImage,
   resizeImage,
   updateBook
 );
-router.delete('/book/:id', auth, deleteBook);
+router.delete('/book/:id', verifyAdmin, deleteBook);
 router.get('/book', searchBook);
 
 // Users Routes
@@ -67,11 +67,11 @@ router.post('/register', ...registerValidator(), register);
 router.post('/login', ...loginValidator(), login);
 router.get('/token', refreshToken);
 router.delete('/logout', logout);
-router.get('/users', auth, getUsers);
+router.get('/users', verifyAdmin, getUsers);
 router.put('/user/:id', auth, ...updateUserValidator(), updateUser);
 router.get('/user/:id', auth, getUser);
-router.delete('/user/:id', auth, deleteUser);
-router.get('/user', auth, searchUser);
+router.delete('/user/:id', verifyAdmin, deleteUser);
+router.get('/user', verifyAdmin, searchUser);
 router.post(
   '/user/password',
   auth,
